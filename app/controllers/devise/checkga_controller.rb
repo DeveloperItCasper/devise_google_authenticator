@@ -33,7 +33,7 @@ class Devise::CheckgaController < Devise::SessionsController
         end
       else
         set_flash_message(:error, :error)
-        redirect_to user_checkga_path(id: 'test_nik')
+        redirect_to user_checkga_path(id: resource.assign_tmp)
       end
 
     else
