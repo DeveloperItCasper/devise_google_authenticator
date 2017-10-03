@@ -47,4 +47,11 @@ class Devise::CheckgaController < Devise::SessionsController
   def devise_resource
     self.resource = resource_class.new
   end
+
+  def after_sign_in_path_for(resource)
+    return office_dashboard_path if resource.user?
+    return admin_dashboard_path if resource.admin?
+    root_path
+  end
+
 end
