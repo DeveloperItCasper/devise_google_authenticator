@@ -49,6 +49,7 @@ class Devise::CheckgaController < Devise::SessionsController
   end
 
   def after_sign_in_path_for(resource)
+    UserMailer.user_login_notice(request.user_agent, request.location, resource).deliver_now if UserMailer
     return office_dashboard_path if resource.user?
     return admin_dashboard_path if resource.admin?
     root_path
