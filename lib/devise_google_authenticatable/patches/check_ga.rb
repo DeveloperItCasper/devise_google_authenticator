@@ -7,10 +7,10 @@ module DeviseGoogleAuthenticator::Patches
 
       alias_method :create_original, :create
 
-      define_method :checkga_resource_path_name do |resource, id|
+      define_method :checkga_resource_path_name do |resource, id, return_to|
         name = resource.class.name.singularize.underscore
         name = name.split('/').last
-        "#{name}_checkga_path(id:'#{id}')"
+        "#{name}_checkga_path(id:'#{id}', return_to:'#{return_to}')"
       end
 
       define_method :create do
@@ -24,7 +24,7 @@ module DeviseGoogleAuthenticator::Patches
           #we head back into the checkga controller with the temporary id
           #Because the model used for google auth may not always be the same, and may be a sub-model, the eval will evaluate the appropriate path name
           #This change addresses https://github.com/AsteriskLabs/devise_google_authenticator/issues/7
-          respond_with resource, :location => eval(checkga_resource_path_name(resource, tmpid))
+          respond_with resource, :location => eval(checkga_resource_path_name(resource, tmpid, params[:user][:return_to]))
 
         else #It's not using, or not enabled for Google 2FA, OR is remembering token and therefore not asking for the moment - carry on, nothing to see here.
           set_flash_message(:notice, :signed_in) if is_flashing_format?
