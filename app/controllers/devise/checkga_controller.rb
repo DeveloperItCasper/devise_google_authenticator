@@ -33,7 +33,7 @@ class Devise::CheckgaController < Devise::SessionsController
         end
       else
         set_flash_message(:error, :error)
-        redirect_to user_checkga_path(id: resource.assign_tmp)
+        redirect_to user_checkga_path(id: resource.assign_tmp, return_to: params[resource_name][:return_to])
       end
 
     else
@@ -50,6 +50,7 @@ class Devise::CheckgaController < Devise::SessionsController
 
   def after_sign_in_path_for(resource)
     UserMailer.user_login_notice(request.user_agent, request.location, resource).deliver_now if UserMailer
+    return params[resource_name][:return_to] if params[resource_name][:return_to].present?
     return office_dashboard_path if resource.user?
     return admin_dashboard_path if resource.admin?
     root_path
